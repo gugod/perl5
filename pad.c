@@ -2156,13 +2156,7 @@ S_cv_clone_pad(pTHX_ CV *proto, CV *cv, CV *outside, HV *cloned,
 			) == o
 		     && !OpSIBLING(o))
 		    {
-			Perl_ck_warner_d(aTHX_
-					  packWARN(WARN_DEPRECATED),
-					 "Constants from lexical "
-					 "variables potentially "
-					 "modified elsewhere are "
-					 "deprecated. This will not "
-                                         "be allowed in Perl 5.32");
+	        Perl_croak(aTHX_ "Constants from lexical variables potentially modified elsewhere are no longer permitted");
 			/* We *copy* the lexical variable, and donate the
 			   copy to newCONSTSUB.  Yes, this is ugly, and
 			   should be killed.  We need to do this for the
