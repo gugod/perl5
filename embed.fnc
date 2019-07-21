@@ -63,10 +63,11 @@
 :   A  Accessible fully everywhere (usually part of the public API):
 :
 :         add entry to the list of exported symbols (unless e or m);
-:         any doc entry goes in perlapi.pod rather than perlintern.pod.  If
-:            no documentation is furnished, x controls what happens: If x
-:            isn't specified, autodoc.pl lists this in perlapi as existing and
-:	     being undocumented; otherwise it simply isn't listed.
+:         any doc entry (unless c) goes in perlapi.pod rather than
+:            perlintern.pod.  If c isn't specified and no documentation is
+:            furnished, x controls what happens: If x isn't specified,
+:            autodoc.pl lists this in perlapi as existing and being
+:            undocumented; otherwise it simply isn't listed.
 :         makes '#define foo Perl_foo' scope not just for PERL_CORE/PERL_EXT
 :
 :      If the function is only exported for use in a public macro, see X.
@@ -105,6 +106,15 @@
 :         add entry to the list of exported symbols;
 :         create PERL_ARGS_ASSERT_foo;
 :	  add embed.h entry (unless overridden by the 'm' flag)
+:
+:   c  Intended for core use only.  This indicates to XS writers that they
+:      shouldn't be using this function.  Devel::PPPort informs them of this,
+:      for example.  Some functions have to be accessible everywhere even if
+:      they are not intended for public use.  An example is helper functions
+:      that are called from inline ones that are publicly available.  This flag
+:      is only meaningful if A is also specified.  This is similar to the x
+:      flag, but it doesn't generate a warning that the function is
+:      experimental in any generated documentation.
 :
 :   D  Function is deprecated:
 :
