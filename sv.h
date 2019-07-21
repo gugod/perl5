@@ -93,7 +93,7 @@ Type flag for scalars.  See L</svtype>.
 =for apidoc AmnU||SVt_PVMG
 Type flag for scalars.  See L</svtype>.
 
-=for apidoc AmnU||SVt_INVLIST
+=for apidoc AmnUc||SVt_INVLIST
 Type flag for scalars.  See L</svtype>.
 
 =for apidoc AmnU||SVt_REGEXP
