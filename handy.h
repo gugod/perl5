@@ -293,76 +293,76 @@ detects that and gets all excited. */
 /*
 =head1 SV Manipulation Functions
 
-=for apidoc Ama|SV*|newSVpvs|"literal string" s
+=for apidoc Ama|SV*|newSVpvs|"literal string"
 Like C<newSVpvn>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Ama|SV*|newSVpvs_flags|"literal string" s|U32 flags
+=for apidoc Ama|SV*|newSVpvs_flags|"literal string"|U32 flags
 Like C<newSVpvn_flags>, but takes a literal string instead of
 a string/length pair.
 
-=for apidoc Ama|SV*|newSVpvs_share|"literal string" s
+=for apidoc Ama|SV*|newSVpvs_share|"literal string"
 Like C<newSVpvn_share>, but takes a literal string instead of
 a string/length pair and omits the hash parameter.
 
-=for apidoc Am|void|sv_catpvs_flags|SV* sv|"literal string" s|I32 flags
+=for apidoc Am|void|sv_catpvs_flags|SV* sv|"literal string"|I32 flags
 Like C<sv_catpvn_flags>, but takes a literal string instead
 of a string/length pair.
 
-=for apidoc Am|void|sv_catpvs_nomg|SV* sv|"literal string" s
+=for apidoc Am|void|sv_catpvs_nomg|SV* sv|"literal string"
 Like C<sv_catpvn_nomg>, but takes a literal string instead of
 a string/length pair.
 
-=for apidoc Am|void|sv_catpvs|SV* sv|"literal string" s
+=for apidoc Am|void|sv_catpvs|SV* sv|"literal string"
 Like C<sv_catpvn>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|void|sv_catpvs_mg|SV* sv|"literal string" s
+=for apidoc Am|void|sv_catpvs_mg|SV* sv|"literal string"
 Like C<sv_catpvn_mg>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|void|sv_setpvs|SV* sv|"literal string" s
+=for apidoc Am|void|sv_setpvs|SV* sv|"literal string"
 Like C<sv_setpvn>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|void|sv_setpvs_mg|SV* sv|"literal string" s
+=for apidoc Am|void|sv_setpvs_mg|SV* sv|"literal string"
 Like C<sv_setpvn_mg>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|SV *|sv_setref_pvs|SV *const rv|const char *const classname|"literal string" s
+=for apidoc Am|SV *|sv_setref_pvs|SV *const rv|const char *const classname|"literal string"
 Like C<sv_setref_pvn>, but takes a literal string instead of
 a string/length pair.
 
 =head1 Memory Management
 
-=for apidoc Ama|char*|savepvs|"literal string" s
+=for apidoc Ama|char*|savepvs|"literal string"
 Like C<savepvn>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Ama|char*|savesharedpvs|"literal string" s
+=for apidoc Ama|char*|savesharedpvs|"literal string"
 A version of C<savepvs()> which allocates the duplicate string in memory
 which is shared between threads.
 
 =head1 GV Functions
 
-=for apidoc Am|HV*|gv_stashpvs|"literal string" name|I32 create
+=for apidoc Am|HV*|gv_stashpvs|"name"|I32 create
 Like C<gv_stashpvn>, but takes a literal string instead of a
 string/length pair.
 
 =head1 Hash Manipulation Functions
 
-=for apidoc Am|SV**|hv_fetchs|HV* tb|"literal string" key|I32 lval
+=for apidoc Am|SV**|hv_fetchs|HV* tb|"key"|I32 lval
 Like C<hv_fetch>, but takes a literal string instead of a
 string/length pair.
 
-=for apidoc Am|SV**|hv_stores|HV* tb|"literal string" key|SV* val
+=for apidoc Am|SV**|hv_stores|HV* tb|"key"|SV* val
 Like C<hv_store>, but takes a literal string instead of a
 string/length pair
 and omits the hash parameter.
 
 =head1 Lexer interface
 
-=for apidoc Amx|void|lex_stuff_pvs|"literal string" pv|U32 flags
+=for apidoc Amx|void|lex_stuff_pvs|"pv"|U32 flags
 
 Like L</lex_stuff_pvn>, but takes a literal string instead of
 a string/length pair.
@@ -370,14 +370,22 @@ a string/length pair.
 =cut
 */
 
-/* concatenating with "" ensures that only literal strings are accepted as
- * argument */
-#define STR_WITH_LEN(s)  ("" s ""), (sizeof(s)-1)
+/*
+=head1 Handy Values
 
-/* note that STR_WITH_LEN() can't be used as argument to macros or functions
- * that under some configurations might be macros, which means that it requires
- * the full Perl_xxx(aTHX_ ...) form for any API calls where it's used.
- */
+=for apidoc Amu|pair|STR_WITH_LEN|"literal string"
+
+Returns two comma separated tokens of the input literal string, and its length.
+This is convenience macro which helps out in some API calls.
+Note that it can't be used as an argument to macros or functions that under
+some configurations might be macros, which means that it requires the full
+Perl_xxx(aTHX_ ...) form for any API calls where it's used.
+
+=cut
+*/
+
+
+#define STR_WITH_LEN(s)  ("" s ""), (sizeof(s)-1)
 
 /* STR_WITH_LEN() shortcuts */
 #define newSVpvs(str) Perl_newSVpvn(aTHX_ STR_WITH_LEN(str))
@@ -455,7 +463,7 @@ Test two buffers (which may contain embedded C<NUL> characters, to see if they
 are equal.  The C<len> parameter indicates the number of bytes to compare.
 Returns zero if equal, or non-zero if non-equal.
 
-=for apidoc Am|bool|memEQs|char* s1|STRLEN l1|"literal string" s2
+=for apidoc Am|bool|memEQs|char* s1|STRLEN l1|"s2"
 Like L</memEQ>, but the second string is a literal enclosed in double quotes,
 C<l1> gives the number of bytes in C<s1>.
 Returns zero if equal, or non-zero if non-equal.
@@ -465,7 +473,7 @@ Test two buffers (which may contain embedded C<NUL> characters, to see if they
 are not equal.  The C<len> parameter indicates the number of bytes to compare.
 Returns zero if non-equal, or non-zero if equal.
 
-=for apidoc Am|bool|memNEs|char* s1|STRLEN l1|"literal string" s2
+=for apidoc Am|bool|memNEs|char* s1|STRLEN l1|"s2"
 Like L</memNE>, but the second string is a literal enclosed in double quotes,
 C<l1> gives the number of bytes in C<s1>.
 Returns zero if non-equal, or zero if non-equal.
@@ -1267,7 +1275,22 @@ patched there.  The file as of this writing is cpan/Devel-PPPort/parts/inc/misc
 
 */
 
-/* Specify the widest unsigned type on the platform. */
+/*
+   void below because that's the best fit, and works for Devel::PPPort
+=for apidoc AmnU|void|WIDEST_UTYPE
+
+Yields the widest unsigned integer type on the platform, currently either
+C<U32> or C<64>.  This can be used in declarations such as
+
+ WIDEST_UTYPE my_uv;
+
+or casts
+
+ my_uv = (WIDEST_UTYPE) val;
+
+=cut
+
+*/
 #ifdef QUADKIND
 #   define WIDEST_UTYPE U64
 #else

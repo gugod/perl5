@@ -533,12 +533,25 @@
 #endif
 
 /*
- * STMT_START { statements; } STMT_END;
- * can be used as a single statement, as in
- * if (x) STMT_START { ... } STMT_END; else ...
- *
- * Trying to select a version that gives no warnings...
- */
+=head1 Miscellaneous Functions
+
+=for apidoc AmnUu|void|STMT_START
+
+ STMT_START { statements; } STMT_END;
+
+can be used as a single statement, as in
+
+ if (x) STMT_START { ... } STMT_END; else ...
+
+These are often used in macro definitions.  Note that you can't return a value
+out of them.
+
+=for apidoc AmnUhu|void|STMT_END
+
+=cut
+
+ Trying to select a version that gives no warnings...
+*/
 #if !(defined(STMT_START) && defined(STMT_END))
 # ifdef PERL_USE_GCC_BRACE_GROUPS
 #   define STMT_START	(void)(	/* gcc supports "({ STATEMENTS; })" */
@@ -2481,6 +2494,58 @@ extern long double Perl_my_frexpl(long double x, int *e);
 #    define PERL_QUAD_MAX 	((IV) (PERL_UQUAD_MAX >> 1))
 #    define PERL_QUAD_MIN 	(-PERL_QUAD_MAX - ((3 & -1) == 3))
 #endif
+
+/*
+=head1 Numeric functions
+
+=for apidoc AmnUh||PERL_INT_MIN
+=for apidoc AmnUh||PERL_LONG_MAX
+=for apidoc AmnUh||PERL_LONG_MIN
+=for apidoc AmnUh||PERL_QUAD_MAX
+=for apidoc AmnUh||PERL_SHORT_MAX
+=for apidoc AmnUh||PERL_SHORT_MIN
+=for apidoc AmnUh||PERL_UCHAR_MAX
+=for apidoc AmnUh||PERL_UCHAR_MIN
+=for apidoc AmnUh||PERL_UINT_MAX
+=for apidoc AmnUh||PERL_ULONG_MAX
+=for apidoc AmnUh||PERL_ULONG_MIN
+=for apidoc AmnUh||PERL_UQUAD_MAX
+=for apidoc AmnUh||PERL_UQUAD_MIN
+=for apidoc AmnUh||PERL_USHORT_MAX
+=for apidoc AmnUh||PERL_USHORT_MIN
+=for apidoc AmnUh||PERL_QUAD_MIN
+=for apidoc AmnU||PERL_INT_MAX
+This and
+C<PERL_INT_MIN>,
+C<PERL_LONG_MAX>,
+C<PERL_LONG_MIN>,
+C<PERL_QUAD_MAX>,
+C<PERL_SHORT_MAX>,
+C<PERL_SHORT_MIN>,
+C<PERL_UCHAR_MAX>,
+C<PERL_UCHAR_MIN>,
+C<PERL_UINT_MAX>,
+C<PERL_ULONG_MAX>,
+C<PERL_ULONG_MIN>,
+C<PERL_UQUAD_MAX>,
+C<PERL_UQUAD_MIN>,
+C<PERL_USHORT_MAX>,
+C<PERL_USHORT_MIN>,
+C<PERL_QUAD_MIN>
+give the largest and smallest number representable in the current
+platform in variables of the corresponding types.
+
+For signed types, the smallest representable number is the most negative
+number, the one furthest away from zero.
+
+For C99 and later compilers, these correspond to things like C<INT_MAX>, which
+are available to the C code.  But these constants, furnished by Perl,
+allow code compiled on earlier compilers to portably have access to the same
+constants.
+
+=cut
+
+*/
 
 typedef MEM_SIZE STRLEN;
 
@@ -6504,7 +6569,7 @@ expression, but with an empty argument list, like this:
      ...
  }
 
-=for apidoc Am|void|WITH_LC_NUMERIC_SET_TO_NEEDED
+=for apidoc Am|void|WITH_LC_NUMERIC_SET_TO_NEEDED|block
 
 This macro invokes the supplied statement or block within the context
 of a L</STORE_LC_NUMERIC_SET_TO_NEEDED> .. L</RESTORE_LC_NUMERIC> pair
@@ -6527,7 +6592,7 @@ is equivalent to:
 #endif
   }
 
-=for apidoc Am|void|WITH_LC_NUMERIC_SET_TO_NEEDED_IN|bool in_lc_numeric
+=for apidoc Am|void|WITH_LC_NUMERIC_SET_TO_NEEDED_IN|bool in_lc_numeric|block
 
 Same as L</WITH_LC_NUMERIC_SET_TO_NEEDED> with in_lc_numeric provided
 as the precalculated value of C<IN_LC(LC_NUMERIC)>. It is the caller's
@@ -7023,7 +7088,7 @@ int flock(int fd, int op);
 /*
 =head1 Numeric functions
 
-AmdR	|bool	|GROK_NUMERIC_RADIX|NN const char **sp|NN const char *send
+=for apidoc AmdR|bool|GROK_NUMERIC_RADIX|NN const char **sp|NN const char *send
 
 A synonym for L</grok_numeric_radix>
 

@@ -3746,8 +3746,14 @@ Perl_refcounted_he_inc(pTHX_ struct refcounted_he *he)
 /*
 =for apidoc cop_fetch_label
 
-Returns the label attached to a cop.
-The flags pointer may be set to C<SVf_UTF8> or 0.
+Returns the label attached to a cop, and stores its length in bytes into
+C<*len>.
+Upon return, C<*flags> will be set to either C<SVf_UTF8> or 0.
+
+Alternatively, use the macro L</C<CopLABEL_len_flags>>;
+or if you don't need to know if the label is UTF-8 or not, the macro
+L</C<CopLABEL_len>>;
+or if you additionally dont need to know the length, L</C<CopLABEL>>.
 
 =cut
 */
@@ -3794,7 +3800,7 @@ Perl_cop_fetch_label(pTHX_ COP *const cop, STRLEN *len, U32 *flags) {
 
 Save a label into a C<cop_hints_hash>.
 You need to set flags to C<SVf_UTF8>
-for a UTF-8 label.
+for a UTF-8 label.  Any other flag is ignored.
 
 =cut
 */

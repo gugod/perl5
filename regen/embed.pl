@@ -67,6 +67,9 @@ sub open_print_header {
 }
 
 my ($embed, $core, $ext, $api) = setup_embed();
+use Data::Dumper;
+$Data::Dumper::Sortkeys=1;
+#print STDERR __LINE__, Dumper $embed, $core, $ext, $api;
 
 # generate proto.h
 {
@@ -81,7 +84,7 @@ my ($embed, $core, $ext, $api) = setup_embed();
 	}
 
 	my ($flags,$retval,$plain_func,@args) = @$_;
-        if ($flags =~ / ( [^AabcDdEefiMmTOoPpRrSUWXx] ) /x) {
+        if ($flags =~ / ( [^AabCDdEefhiMmNnTOoPpRrSsUuWXx] ) /x) {
 	    die_at_end "flag $1 is not legal (for function $plain_func)";
 	}
 	my @nonnull;
@@ -101,6 +104,8 @@ my ($embed, $core, $ext, $api) = setup_embed();
 
 	die_at_end "$plain_func: S flag is mutually exclusive from the i and p plags"
 					    if $flags =~ /S/ && $flags =~ /[ip]/;
+
+	die_at_end "$plain_func: u flag only usable with m" if $flags =~ /u/ && $flags !~ /m/;
 
 	my $static_inline = 0;
 	if ($flags =~ /([Si])/) {
@@ -124,7 +129,9 @@ my ($embed, $core, $ext, $api) = setup_embed();
 	    }
 	}
 
-	die_at_end "M flag requires p flag" if $flags =~ /M/ && $flags !~ /p/;
+	die_at_end "For '$plain_func', M flag requires p flag" if $flags =~ /M/ && $flags !~ /p/;
+	die_at_end "For '$plain_func', b and m flags are mutually exclusive (try M flag)" if $flags =~ /b/ && $flags =~ /m/;
+	die_at_end "For '$plain_func', b flag without M flag requires D flag" if $flags =~ /b/ && $flags !~ /M/ && $flags !~ /D/;
 
 	$func = full_name($plain_func, $flags);
 	$ret = "";

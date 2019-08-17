@@ -11981,6 +11981,7 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp, U32 depth)
                                     For large programs it seems to be required
                                     but I can't figure out why. -- dmq*/
 #endif
+                    /*ret = reg_node(pRExC_state, 0);*/
 		    return ret;
 		}
                 RExC_parse += UTF
